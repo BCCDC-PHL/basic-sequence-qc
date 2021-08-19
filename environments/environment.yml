@@ -1,0 +1,11 @@
+name: basic-sequence-qc
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3
+  - kraken2=2.1.1
+  - bracken=2.6.0
+  - mash=2.3
+  - seqtk=1.3
