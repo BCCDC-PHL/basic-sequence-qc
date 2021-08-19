@@ -42,3 +42,4 @@ The output file includes the following headers:
 - `total_bases`
 - `average_base_quality`
 - `percent_bases_above_q30`
+- `percent_gc`
