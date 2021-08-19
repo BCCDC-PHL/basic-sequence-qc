@@ -26,3 +26,19 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --fastq_input <your illumina run directory> \
   --outdir <output directory>
 ```
+
+## Output
+
+A single output file in .csv format will be created in the directory specified by `--outdir`. The filename will be `basic_qc_stats.csv`.
+If a prefix is provided using the `--prefix` flag, it will be prepended to the output filename, for example: `prefix_basic_qc_stats.csv`.
+
+The output file includes the following headers:
+
+- `sample_id`
+- `most_abundant_species_name`
+- `most_abundant_species_fraction_total_reads`
+- `estimated_genome_size_bp`
+- `estimated_depth_coverage`
+- `total_bases`
+- `average_base_quality`
+- `percent_bases_above_q30`
