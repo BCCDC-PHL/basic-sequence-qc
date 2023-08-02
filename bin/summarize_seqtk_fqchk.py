@@ -3,6 +3,7 @@
 import argparse
 import csv
 import json
+import sys
 
 def parse_seqtk_fqchk_output(seqtk_fqchk_output_path, quality_threshold):
     output = []
@@ -37,13 +38,16 @@ def main(args):
     
     total_bases = sum([x['num_bases'] for x in seqtk_fqchk_output])
 
-    overall_percent_gc = sum([x['percent_gc'] * x['num_bases'] for x in seqtk_fqchk_output]) / total_bases
-
-    overall_average_q = sum([x['average_q'] * x['num_bases'] for x in seqtk_fqchk_output]) / total_bases
-
     percent_above_header = 'percent_bases_above_q' + str(quality_threshold)
 
-    overall_percent_above_threshold = sum([x[percent_above_header] * x['num_bases'] for x in seqtk_fqchk_output]) / total_bases
+    if total_bases == 0:
+        overall_percent_gc = 0.0
+        overall_average_q = 0.0
+        overall_percent_above_threshold = 0.0
+    else:
+        overall_percent_gc = sum([x['percent_gc'] * x['num_bases'] for x in seqtk_fqchk_output]) / total_bases
+        overall_average_q = sum([x['average_q'] * x['num_bases'] for x in seqtk_fqchk_output]) / total_bases
+        overall_percent_above_threshold = sum([x[percent_above_header] * x['num_bases'] for x in seqtk_fqchk_output]) / total_bases    
 
     print(','.join([
         'sample_id',
