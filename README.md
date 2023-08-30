@@ -3,27 +3,17 @@
 A generic pipeline that can be run on an arbitrary set of Illumina sequence files, regardless of the project or organism of interest.
 
 * Sequence quality information
-* Possible contamination
 
 ## Analyses
 
-* [`mash`](https://github.com/marbl/Mash): Estimate genome size and depth of coverage
-* [`seqtk fqchk`](https://github.com/lh3/seqtk): Measure average sequence quality score, percent of bases above Q30 and GC content.
-* [`kraken2`](https://github.com/DerrickWood/kraken2) + [`bracken`](https://github.com/jenniferlu717/Bracken): Taxonomic classification
-of reads. Estimation of relative abundances of the most abundant species in each sample.
+* [`fastp`](https://github.com/OpenGene/fastp): Collect sequence QC stats
 
 ## Usage
 
 ```
 nextflow run BCCDC-PHL/basic-sequence-qc \
-  [--kraken2_db /path/to/kraken2_db] \
-  [--bracken_db /path/to/bracken_db] \
-  [--read_length <read_length>] \
-  [--seqtk_fqchk_threshold <threshold>] \
-  [--mash_sketch_kmer_size <kmer_size>] \
-  [--mash_sketch_minimum_copies <copies>] \
   [--prefix 'prefix'] \
-  --fastq_input <your illumina run directory> \
+  --fastq_input <your fastq input directory> \
   --outdir <output directory>
 ```
 
@@ -34,12 +24,26 @@ If a prefix is provided using the `--prefix` flag, it will be prepended to the o
 
 The output file includes the following headers:
 
-- `sample_id`
-- `most_abundant_species_name`
-- `most_abundant_species_fraction_total_reads`
-- `estimated_genome_size_bp`
-- `estimated_depth_coverage`
-- `total_bases`
-- `average_base_quality`
-- `percent_bases_above_q30`
-- `percent_gc`
+```
+sample_id
+total_reads_before_filtering
+total_reads_after_filtering
+total_bases_before_filtering
+total_bases_after_filtering
+read1_mean_length_before_filtering
+read1_mean_length_after_filtering
+read2_mean_length_before_filtering
+read2_mean_length_after_filtering
+q20_bases_before_filtering
+q20_bases_after_filtering
+q20_rate_before_filtering
+q20_rate_after_filtering
+q30_bases_before_filtering
+q30_bases_after_filtering
+q30_rate_before_filtering
+q30_rate_after_filtering
+gc_content_before_filtering
+gc_content_after_filtering
+adapter_trimmed_reads
+adapter_trimmed_bases
+```
