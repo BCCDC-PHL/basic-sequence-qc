@@ -17,6 +17,31 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --outdir <output directory>
 ```
 
+Alternatively, a `sample_sheet.csv` file can be provided, with fields:
+
+```
+ID
+R1
+R2
+```
+
+For example:
+```csv
+ID,R1,R2
+SAMPLE-01,/path/to/SAMPLE-01_R1.fastq.gz,/path/to/SAMPLE-01_R2.fastq.gz
+SAMPLE-02,/path/to/SAMPLE-02_R1.fastq.gz,/path/to/SAMPLE-02_R2.fastq.gz
+SAMPLE-03,/path/to/SAMPLE-03_R1.fastq.gz,/path/to/SAMPLE-03_R2.fastq.gz
+```
+
+The `sample_sheet.csv` file can be provided using the `--sample_sheet_input` flag as follows:
+
+```
+nextflow run BCCDC-PHL/basic-sequence-qc \
+  [--prefix 'prefix'] \
+  --sample_sheet_input <your sample_sheet.csv file> \
+  --outdir <output directory>
+```
+
 ## Output
 
 A single output file in .csv format will be created in the directory specified by `--outdir`. The filename will be `basic_qc_stats.csv`.
