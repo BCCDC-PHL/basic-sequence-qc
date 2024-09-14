@@ -42,6 +42,11 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --outdir <output directory>
 ```
 
+## Dehosting
+
+This pipeline supports an optional dehosting...
+
+
 ## Output
 
 A single output file in .csv format will be created in the directory specified by `--outdir`. The filename will be `basic_qc_stats.csv`.
