@@ -7,6 +7,7 @@ A generic pipeline that can be run on an arbitrary set of Illumina sequence file
 ## Analyses
 
 * [`fastp`](https://github.com/OpenGene/fastp): Collect sequence QC stats
+* [`hostile`](https://github.com/bede/hostile): Removal of host (human) reads (optional)
 
 ## Usage
 
