@@ -156,3 +156,27 @@ gc_content_after_filtering
 adapter_trimmed_reads
 adapter_trimmed_bases
 ```
+
+### Dehosted Reads
+
+If dehosting is performed, dehosted reads will be deposited under the directory supplied for the `--outdir` param, in a sub-directory
+for each sample, named using the sample ID. For example:
+
+```
+outdir
+├── sample-01
+│   ├── sample-01_dehosted_R1.fastq.gz
+│   ├── sample-01_dehosted_R2.fastq.gz
+│   ├── sample-01_dehosted_fastp.csv
+│   ├── sample-01_fastp.csv
+│   └── sample-01_hostile.log.json
+├── sample-02
+│   ├── sample-02_dehosted_R1.fastq.gz
+│   ├── sample-02_dehosted_R2.fastq.gz
+│   ├── sample-02_dehosted_fastp.csv
+│   ├── sample-02_fastp.csv
+│   └── sample-02_hostile.log.json
+├── sample-03
+│   ├── ...
+...
+```
