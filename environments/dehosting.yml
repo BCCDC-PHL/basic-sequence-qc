@@ -1,0 +1,8 @@
+name: basic-sequence-qc-dehosting
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3
+  - hostile=1.1.0

@@ -7,6 +7,7 @@ A generic pipeline that can be run on an arbitrary set of Illumina sequence file
 ## Analyses
 
 * [`fastp`](https://github.com/OpenGene/fastp): Collect sequence QC stats
+* [`hostile`](https://github.com/bede/hostile): Removal of host (human) reads (optional)
 
 ## Usage
 
@@ -42,6 +43,90 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --outdir <output directory>
 ```
 
+## Dehosting
+
+This pipeline supports an optional dehosting step that can be used to remove human-derived sequence reads.
+Removal of host reads from other organisms is not currently supported.
+
+### Setup
+
+Before using this pipeline to perform dehosting, the human reference genome(s) should be downloaded.
+Dehosting is performed by attempting to align reads against the human genome and removing reads
+that align with sufficient quality and specificity.
+
+1. Activate the conda environment that is used by this pipeline for dehosting.
+
+```
+conda activate basic-sequence-qc-dehosting-6e4260b30b21d1dbd469b1b1e0f20628
+```
+
+2. Download (fetch) the default reference genome (`human-t2t-hla`)
+
+```
+hostile fetch
+```
+
+The reference will be downloaded to:
+
+```
+~/.local/share/hostile
+```
+
+If alternative versions of the reference genome are needed, download them 
+
+```
+hostile fetch --name <REF_NAME>
+```
+
+Details on available references can be found on [the bede/hostile README](https://github.com/bede/hostile?tab=readme-ov-file#indexes).
+The list of available reference names can be found by running:
+
+```
+hostile fetch --list
+```
+
+...which should return a list like this:
+
+```
+human-t2t-hla
+human-t2t-hla-argos985
+human-t2t-hla-argos985-mycob140
+human-t2t-hla.rs-viral-202401_ml-phage-202401
+human-t2t-hla.argos-bacteria-985_rs-viral-202401_ml-phage-202401
+```
+
+3. Deactivate the conda env.
+
+```
+conda deactivate
+```
+
+### Performing Dehosting
+
+To include the dehosting step in the pipeline analysis, add the `--dehost` flag:
+
+```
+nextflow run BCCDC-PHL/basic-sequence-qc \
+  -profile conda \
+  --cache ~/.conda/envs \
+  --fastq_input /path/to/fastq_input \
+  --dehost \
+  --outidr /path/to/output-dir
+```
+
+By default, the `human-t2t-hla` reference will be used. To use an alternative reference, include the `--dehosting_index` flag along
+with the reference name:
+
+```
+nextflow run BCCDC-PHL/basic-sequence-qc \
+  -profile conda \
+  --cache ~/.conda/envs \
+  --fastq_input /path/to/fastq_input \
+  --dehost \
+  --dehosting_reference human-t2t-hla-argos985-mycob140 \
+  --outidr /path/to/output-dir
+```
+
 ## Output
 
 A single output file in .csv format will be created in the directory specified by `--outdir`. The filename will be `basic_qc_stats.csv`.
@@ -71,4 +156,28 @@ gc_content_before_filtering
 gc_content_after_filtering
 adapter_trimmed_reads
 adapter_trimmed_bases
+```
+
+### Dehosted Reads
+
+If dehosting is performed, dehosted reads will be deposited under the directory supplied for the `--outdir` param, in a sub-directory
+for each sample, named using the sample ID. For example:
+
+```
+outdir
+├── sample-01
+│   ├── sample-01_dehosted_R1.fastq.gz
+│   ├── sample-01_dehosted_R2.fastq.gz
+│   ├── sample-01_dehosted_fastp.csv
+│   ├── sample-01_fastp.csv
+│   └── sample-01_hostile.log.json
+├── sample-02
+│   ├── sample-02_dehosted_R1.fastq.gz
+│   ├── sample-02_dehosted_R2.fastq.gz
+│   ├── sample-02_dehosted_fastp.csv
+│   ├── sample-02_fastp.csv
+│   └── sample-02_hostile.log.json
+├── sample-03
+│   ├── ...
+...
 ```
