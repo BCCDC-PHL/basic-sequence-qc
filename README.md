@@ -44,8 +44,87 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
 
 ## Dehosting
 
-This pipeline supports an optional dehosting...
+This pipeline supports an optional dehosting step that can be used to remove human-derived sequence reads.
+Removal of host reads from other organisms is not currently supported.
 
+### Setup
+
+Before using this pipeline to perform dehosting, the human reference genome(s) should be downloaded.
+Dehosting is performed by attempting to align reads against the human genome and removing reads
+that align with sufficient quality and specificity.
+
+1. Activate the conda environment that is used by this pipeline for dehosting.
+
+```
+conda activate basic-sequence-qc-dehosting-6e4260b30b21d1dbd469b1b1e0f20628
+```
+
+2. Download (fetch) the default reference genome (`human-t2t-hla`)
+
+```
+hostile fetch
+```
+
+The reference will be downloaded to:
+
+```
+~/.local/share/hostile
+```
+
+If alternative versions of the reference genome are needed, download them 
+
+```
+hostile fetch --name <REF_NAME>
+```
+
+Details on available references can be found on [the bede/hostile README](https://github.com/bede/hostile?tab=readme-ov-file#indexes).
+The list of available reference names can be found by running:
+
+```
+hostile fetch --list
+```
+
+...which should return a list like this:
+
+```
+human-t2t-hla
+human-t2t-hla-argos985
+human-t2t-hla-argos985-mycob140
+human-t2t-hla.rs-viral-202401_ml-phage-202401
+human-t2t-hla.argos-bacteria-985_rs-viral-202401_ml-phage-202401
+```
+
+3. Deactivate the conda env.
+
+```
+conda deactivate
+```
+
+### Performing Dehosting
+
+To include the dehosting step in the pipeline analysis, add the `--dehost` flag:
+
+```
+nextflow run BCCDC-PHL/basic-sequence-qc \
+  -profile conda \
+  --cache ~/.conda/envs \
+  --fastq_input /path/to/fastq_input \
+  --dehost \
+  --outidr /path/to/output-dir
+```
+
+By default, the `human-t2t-hla` reference will be used. To use an alternative reference, include the `--dehosting_index` flag along
+with the reference name:
+
+```
+nextflow run BCCDC-PHL/basic-sequence-qc \
+  -profile conda \
+  --cache ~/.conda/envs \
+  --fastq_input /path/to/fastq_input \
+  --dehost \
+  --dehosting_reference human-t2t-hla-argos985-mycob140 \
+  --outidr /path/to/output-dir
+```
 
 ## Output
 
