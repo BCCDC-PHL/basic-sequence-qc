@@ -57,7 +57,7 @@ that align with sufficient quality and specificity.
 1. Activate the conda environment that is used by this pipeline for dehosting.
 
 ```
-conda activate basic-sequence-qc-dehosting-6e4260b30b21d1dbd469b1b1e0f20628
+conda activate basic-sequence-qc-dehosting-eeb6f6f753e1d37317d1d06b4e3141d5
 ```
 
 2. Download (fetch) the default reference genome (`human-t2t-hla`)
