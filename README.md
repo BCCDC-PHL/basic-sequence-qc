@@ -123,7 +123,7 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --cache ~/.conda/envs \
   --fastq_input /path/to/fastq_input \
   --dehost \
-  --dehosting_reference human-t2t-hla-argos985-mycob140 \
+  --dehosting_index human-t2t-hla-argos985-mycob140 \
   --outdir /path/to/output-dir
 ```
 
