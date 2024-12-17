@@ -57,7 +57,7 @@ that align with sufficient quality and specificity.
 1. Activate the conda environment that is used by this pipeline for dehosting.
 
 ```
-conda activate basic-sequence-qc-dehosting-6e4260b30b21d1dbd469b1b1e0f20628
+conda activate basic-sequence-qc-dehosting-eeb6f6f753e1d37317d1d06b4e3141d5
 ```
 
 2. Download (fetch) the default reference genome (`human-t2t-hla`)
@@ -111,7 +111,7 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --cache ~/.conda/envs \
   --fastq_input /path/to/fastq_input \
   --dehost \
-  --outidr /path/to/output-dir
+  --outdir /path/to/output-dir
 ```
 
 By default, the `human-t2t-hla` reference will be used. To use an alternative reference, include the `--dehosting_index` flag along
@@ -123,8 +123,8 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --cache ~/.conda/envs \
   --fastq_input /path/to/fastq_input \
   --dehost \
-  --dehosting_reference human-t2t-hla-argos985-mycob140 \
-  --outidr /path/to/output-dir
+  --dehosting_index human-t2t-hla-argos985-mycob140 \
+  --outdir /path/to/output-dir
 ```
 
 ## Output

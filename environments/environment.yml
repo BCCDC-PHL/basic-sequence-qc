@@ -2,7 +2,6 @@ name: basic-sequence-qc
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - python=3
   - fastp=0.23.4
