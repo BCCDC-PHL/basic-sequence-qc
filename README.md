@@ -111,7 +111,7 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --cache ~/.conda/envs \
   --fastq_input /path/to/fastq_input \
   --dehost \
-  --outidr /path/to/output-dir
+  --outdir /path/to/output-dir
 ```
 
 By default, the `human-t2t-hla` reference will be used. To use an alternative reference, include the `--dehosting_index` flag along
@@ -124,7 +124,7 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --fastq_input /path/to/fastq_input \
   --dehost \
   --dehosting_reference human-t2t-hla-argos985-mycob140 \
-  --outidr /path/to/output-dir
+  --outdir /path/to/output-dir
 ```
 
 ## Output
