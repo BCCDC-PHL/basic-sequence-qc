@@ -38,8 +38,12 @@ jobs:
       run: bash .github/scripts/install_nextflow.sh
     - name: Install Apptainer
       run: bash .github/scripts/install_apptainer.sh
+    - name: Create ART Read-Simulation Environment
+      run: bash .github/scripts/create_art_environment.sh
     - name: Download Assemblies
       run: bash .github/scripts/download_assemblies.sh
+    - name: Simulate Reads
+      run: bash .github/scripts/simulate_reads.sh
     - name: Run Pipeline
       env:
         PROFILE: ${{ matrix.profile }}
