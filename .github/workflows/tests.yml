@@ -19,6 +19,9 @@ jobs:
           - nextflow_version: "24.10.6"
             java_version: "17"
             profile: "conda"
+          - nextflow_version: "24.10.6"
+            java_version: "17"
+            profile: "docker"
     name: Nextflow v${{ matrix.nextflow_version }} / ${{ matrix.profile }}
     runs-on: ubuntu-latest
     steps:
@@ -36,8 +39,6 @@ jobs:
       env:
         NXF_VER: ${{ matrix.nextflow_version }}
       run: bash .github/scripts/install_nextflow.sh
-    - name: Install Apptainer
-      run: bash .github/scripts/install_apptainer.sh
     - name: Create ART Read-Simulation Environment
       run: bash .github/scripts/create_art_environment.sh
     - name: Download Assemblies
