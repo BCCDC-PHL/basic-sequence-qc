@@ -1,0 +1,59 @@
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+name: Tests
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - nextflow_version: "21.04.3"
+            java_version: "8"
+            profile: "conda"
+          - nextflow_version: "24.10.6"
+            java_version: "17"
+            profile: "conda"
+    name: Nextflow v${{ matrix.nextflow_version }} / ${{ matrix.profile }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Create Artifacts Directory
+      run: mkdir artifacts
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ matrix.java_version }}
+    - name: Install Miniconda
+      run: bash .github/scripts/install_conda.sh
+    - name: Install Nextflow
+      env:
+        NXF_VER: ${{ matrix.nextflow_version }}
+      run: bash .github/scripts/install_nextflow.sh
+    - name: Install Apptainer
+      run: bash .github/scripts/install_apptainer.sh
+    - name: Download Assemblies
+      run: bash .github/scripts/download_assemblies.sh
+    - name: Run Pipeline
+      env:
+        PROFILE: ${{ matrix.profile }}
+      run: bash .github/scripts/run_pipeline.sh
+    - name: Create Output Checking Environment
+      run: bash .github/scripts/create_output_checking_environment.sh
+    - name: Check Outputs
+      run: bash .github/scripts/check_outputs.sh
+    - name: Prepare Artifacts
+      if: always()
+      run: bash .github/scripts/prepare_artifacts.sh
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: artifacts-BCCDC-PHL-mlst-nf-nextflow-v${{ matrix.nextflow_version }}-${{ matrix.profile }}-${{ github.run_id }}.${{ github.run_attempt }}
+        path: artifacts
