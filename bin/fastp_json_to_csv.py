@@ -3,31 +3,93 @@
 import argparse
 import json
 
+
+def seq_is_poly_g(seq):
+    if len(seq) < 10:
+        return False
+    num_g = seq.count('G')
+    percent_g = num_g / len(seq)
+    if 'GGGGGGGGGG' in seq and percent_g > 0.95:
+        return True
+    else:
+        return False
+    
+
+def count_poly_g(fastp_report):
+    """
+
+    """
+    poly_g_counts = {}
+    r1_overrepresented_seqs_before_filtering = fastp_report['read1_before_filtering']['overrepresented_sequences']
+
+    r1_overrepresented_seqs_after_filtering = fastp_report['read1_after_filtering']['overrepresented_sequences']
+
+    r2_overrepresented_seqs_before_filtering = fastp_report['read2_before_filtering']['overrepresented_sequences']
+
+    r2_overrepresented_seqs_after_filtering = fastp_report['read2_after_filtering']['overrepresented_sequences']
+
+    poly_g_counts['read1_num_poly_g_before_filtering'] = 0
+    for seq, count in r1_overrepresented_seqs_before_filtering.items():
+        if seq_is_poly_g(seq):
+            poly_g_counts['read1_num_poly_g_before_filtering'] += count
+
+    poly_g_counts['read1_num_poly_g_after_filtering'] = 0
+    for seq, count in r1_overrepresented_seqs_after_filtering.items():
+        if seq_is_poly_g(seq):
+            poly_g_counts['read1_num_poly_g_after_filtering'] += count
+
+    poly_g_counts['read2_num_poly_g_before_filtering'] = 0
+    for seq, count in r2_overrepresented_seqs_before_filtering.items():
+        if seq_is_poly_g(seq):
+            poly_g_counts['read2_num_poly_g_before_filtering'] += count
+
+    poly_g_counts['read2_num_poly_g_after_filtering'] = 0
+    for seq, count in r2_overrepresented_seqs_after_filtering.items():
+        if seq_is_poly_g(seq):
+            poly_g_counts['read2_num_poly_g_after_filtering'] += count
+
+    
+    return poly_g_counts
+        
+    
+
 def main(args):
     with open(args.fastp_json, 'r') as f:
         fastp_report = json.load(f)
 
-    total_reads_before_filtering = fastp_report['summary']['before_filtering']['total_reads']
-    total_reads_after_filtering = fastp_report['summary']['after_filtering']['total_reads']
-    total_bases_before_filtering = fastp_report['summary']['before_filtering']['total_bases']
-    total_bases_after_filtering = fastp_report['summary']['after_filtering']['total_bases']
-    read1_mean_length_before_filtering = fastp_report['summary']['before_filtering']['read1_mean_length']
-    read2_mean_length_before_filtering = fastp_report['summary']['before_filtering']['read2_mean_length']
-    read1_mean_length_after_filtering = fastp_report['summary']['after_filtering']['read1_mean_length']
-    read2_mean_length_after_filtering = fastp_report['summary']['after_filtering']['read2_mean_length']
-    q20_bases_before_filtering = fastp_report['summary']['before_filtering']['q20_bases']
-    q20_bases_after_filtering = fastp_report['summary']['after_filtering']['q20_bases']
-    q20_rate_before_filtering = fastp_report['summary']['before_filtering']['q20_rate']
-    q20_rate_after_filtering = fastp_report['summary']['after_filtering']['q20_rate']
-    q30_bases_before_filtering = fastp_report['summary']['before_filtering']['q30_bases']
-    q30_bases_after_filtering = fastp_report['summary']['after_filtering']['q30_bases']
-    q30_rate_before_filtering = fastp_report['summary']['before_filtering']['q30_rate']
-    q30_rate_after_filtering = fastp_report['summary']['after_filtering']['q30_rate']
-    gc_content_before_filtering = fastp_report['summary']['before_filtering']['gc_content']
-    gc_content_after_filtering = fastp_report['summary']['after_filtering']['gc_content']
+    report_summary = fastp_report['summary']
+    before_filtering = report_summary['before_filtering']
+    after_filtering = report_summary['after_filtering']
+    
+    total_reads_before_filtering = before_filtering['total_reads']
+    total_reads_after_filtering  = after_filtering['total_reads']
+    total_bases_before_filtering = before_filtering['total_bases']
+    total_bases_after_filtering  = after_filtering['total_bases']
+
+    read1_mean_length_before_filtering = before_filtering['read1_mean_length']
+    read2_mean_length_before_filtering = before_filtering['read2_mean_length']
+    read1_mean_length_after_filtering  = after_filtering['read1_mean_length']
+    read2_mean_length_after_filtering  = after_filtering['read2_mean_length']
+
+    q20_bases_before_filtering = before_filtering['q20_bases']
+    q20_bases_after_filtering  = after_filtering['q20_bases']
+    q20_rate_before_filtering  = before_filtering['q20_rate']
+    q20_rate_after_filtering   = after_filtering['q20_rate']
+
+    q30_bases_before_filtering = before_filtering['q30_bases']
+    q30_bases_after_filtering  = after_filtering['q30_bases']
+    q30_rate_before_filtering  = before_filtering['q30_rate']
+    q30_rate_after_filtering   = after_filtering['q30_rate']
+
+    gc_content_before_filtering = before_filtering['gc_content']
+    gc_content_after_filtering  = after_filtering['gc_content']
+
     adapter_trimmed_reads = fastp_report['adapter_cutting']['adapter_trimmed_reads']
     adapter_trimmed_bases = fastp_report['adapter_cutting']['adapter_trimmed_bases']
 
+    poly_g_counts = count_poly_g(fastp_report)
+    print(json.dumps(poly_g_counts, indent=2))
+    exit()
 
     output_fields = [
         'total_reads_before_filtering',
@@ -38,6 +100,10 @@ def main(args):
         'read1_mean_length_after_filtering',
         'read2_mean_length_before_filtering',
         'read2_mean_length_after_filtering',
+        'read1_num_poly_g_before_filtering',
+        'read1_num_poly_g_after_filtering',
+        'read2_num_poly_g_before_filtering',
+        'read2_num_poly_g_after_filtering',
         'q20_bases_before_filtering',
         'q20_bases_after_filtering',
         'q20_rate_before_filtering',
@@ -50,6 +116,7 @@ def main(args):
         'gc_content_after_filtering',
         'adapter_trimmed_reads',
         'adapter_trimmed_bases',
+
     ]
 
     output_data = []
