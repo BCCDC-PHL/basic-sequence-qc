@@ -4,4 +4,4 @@ channels:
   - bioconda
 dependencies:
   - python=3
-  - hostile=1.1.0
+  - hostile=2.0.1

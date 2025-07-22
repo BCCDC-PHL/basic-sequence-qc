@@ -43,6 +43,19 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
   --outdir <output directory>
 ```
 
+### Publishing Trimmed Reads
+
+By default, the trimmed reads are not 'published' to the output directory. To enable publishing the trimmed reads,
+add the `--publish_trimmed_reads` flag:
+
+```
+nextflow run BCCDC-PHL/basic-sequence-qc \
+  [--prefix 'prefix'] \
+  --publish_trimmed_reads \
+  --sample_sheet_input <your sample_sheet.csv file> \
+  --outdir <output directory>
+```
+
 ## Dehosting
 
 This pipeline supports an optional dehosting step that can be used to remove human-derived sequence reads.

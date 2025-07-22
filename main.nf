@@ -3,7 +3,8 @@
 nextflow.enable.dsl = 2
 
 include { fastp }                    from './modules/fastp.nf'
-include { fastp as fastp_dehosted }  from './modules/fastp.nf'
+include { fastp_pre_dehosting }      from './modules/fastp.nf'
+include { fastp_post_dehosting }     from './modules/fastp.nf'
 include { dehost }                   from './modules/dehosting.nf'
 include { combine_fastp_reports }    from './modules/dehosting.nf'
 
@@ -17,12 +18,15 @@ workflow {
 
   main:
 
-    fastp(ch_fastq_input.combine(Channel.of("")))
+    if (!params.dehost) {
+        fastp(ch_fastq_input)
+    }
 
     if (params.dehost) {
-	dehost(ch_fastq_input)
-	fastp_dehosted(dehost.out.dehosted_reads.combine(Channel.of("_dehosted")))
-	combine_fastp_reports(fastp.out.metrics.join(fastp_dehosted.out.metrics))
+        fastp_pre_dehosting(ch_fastq_input)
+	dehost(fastp_pre_dehosting.out.trimmed_reads)
+	fastp_post_dehosting(dehost.out.dehosted_reads)
+	combine_fastp_reports(fastp_pre_dehosting.out.metrics.join(fastp_post_dehosting.out.metrics))
     }
 
     output_prefix = params.prefix == '' ? params.prefix : params.prefix + '_'

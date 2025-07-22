@@ -26,7 +26,10 @@ def parse_fastp_csv(fastp_csv_path: Path):
         'q30_bases_after_filtering',
         'adapter_trimmed_reads',
         'adapter_trimmed_bases',
-        
+        'read1_num_poly_g_before_filtering',
+        'read1_num_poly_g_after_filtering',
+        'read2_num_poly_g_before_filtering',
+        'read2_num_poly_g_after_filtering',        
     ]
     float_fields = [
         'q20_rate_before_filtering',
@@ -109,6 +112,11 @@ def main(args):
         'gc_content_after_filtering',
         'adapter_trimmed_reads',
         'adapter_trimmed_bases',
+        'read1_num_poly_g_before_filtering',
+        'read1_num_poly_g_after_filtering',
+        'read2_num_poly_g_before_filtering',
+        'read2_num_poly_g_after_filtering',
+
     ]
     writer = csv.DictWriter(sys.stdout, fieldnames=output_fieldnames, dialect='unix', quoting=csv.QUOTE_MINIMAL, extrasaction='ignore')
     writer.writeheader()

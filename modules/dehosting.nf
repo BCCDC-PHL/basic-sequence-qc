@@ -19,7 +19,7 @@ process dehost {
 	--fastq1 ${reads[0]} \
 	--fastq2 ${reads[1]} \
 	--index ${params.dehosting_index} \
-	--out-dir . \
+	--output . \
 	> ${sample_id}_hostile.log.json
 
     mv ${sample_id}*.clean_1.fastq.gz ${sample_id}_dehosted_R1.fastq.gz
