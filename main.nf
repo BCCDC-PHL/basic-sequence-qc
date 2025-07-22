@@ -15,6 +15,7 @@ workflow {
   } else {
     ch_fastq_input = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it.tail()] }
   }
+  ch_hostile_cache_dir = Channel.fromPath(params.hostile_cache_dir)
 
   main:
 
@@ -24,7 +25,7 @@ workflow {
 
     if (params.dehost) {
         fastp_pre_dehosting(ch_fastq_input)
-	dehost(fastp_pre_dehosting.out.trimmed_reads)
+	dehost(fastp_pre_dehosting.out.trimmed_reads.combine(ch_hostile_cache_dir))
 	fastp_post_dehosting(dehost.out.dehosted_reads)
 	combine_fastp_reports(fastp_pre_dehosting.out.metrics.join(fastp_post_dehosting.out.metrics))
     }

@@ -6,7 +6,7 @@ process dehost {
     publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_hostile.log.json", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(reads)
+    tuple val(sample_id), path(reads), path(hostile_cache_dir)
 
     output:
     tuple val(sample_id), path("${sample_id}_hostile.log.json"), emit: hostile_log
@@ -14,6 +14,8 @@ process dehost {
 
     script:
     """
+    export HOSTILE_CACHE_DIR=${hostile_cache_dir}
+
     hostile clean \
 	--threads ${task.cpus} \
 	--fastq1 ${reads[0]} \

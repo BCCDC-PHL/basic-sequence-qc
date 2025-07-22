@@ -61,57 +61,37 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
 This pipeline supports an optional dehosting step that can be used to remove human-derived sequence reads.
 Removal of host reads from other organisms is not currently supported.
 
-### Setup
-
-Before using this pipeline to perform dehosting, the human reference genome(s) should be downloaded.
-Dehosting is performed by attempting to align reads against the human genome and removing reads
-that align with sufficient quality and specificity.
-
-1. Activate the conda environment that is used by this pipeline for dehosting.
-
-```
-conda activate basic-sequence-qc-dehosting-eeb6f6f753e1d37317d1d06b4e3141d5
-```
-
-2. Download (fetch) the default reference genome (`human-t2t-hla`)
-
-```
-hostile fetch
-```
-
-The reference will be downloaded to:
-
-```
-~/.local/share/hostile
-```
-
-If alternative versions of the reference genome are needed, download them 
-
-```
-hostile fetch --name <REF_NAME>
-```
 
 Details on available references can be found on [the bede/hostile README](https://github.com/bede/hostile?tab=readme-ov-file#indexes).
+
+
+### Setup
+
+This pipeline assumes that the host genome index used for dehosting has already been downloaded to the directory associated with the `hostile_index_dir` parameter.
+
 The list of available reference names can be found by running:
 
 ```
-hostile fetch --list
+hostile index list
 ```
 
 ...which should return a list like this:
 
 ```
-human-t2t-hla
-human-t2t-hla-argos985
-human-t2t-hla-argos985-mycob140
-human-t2t-hla.rs-viral-202401_ml-phage-202401
-human-t2t-hla.argos-bacteria-985_rs-viral-202401_ml-phage-202401
+Remote  human-t2t-hla
+Remote  human-t2t-hla-argos985
+Remote  human-t2t-hla-argos985-mycob140
+Remote  human-t2t-hla.rs-viral-202401_ml-phage-202401
+Remote  human-t2t-hla.argos-bacteria-985_rs-viral-202401_ml-phage-202401
+Remote  mouse-mm39
+Local   human-t2t-hla (Bowtie2)
+Local   human-t2t-hla-argos985-mycob140 (Minimap2, Bowtie2)
 ```
 
-3. Deactivate the conda env.
+Indexes can be downloaded using the following command:
 
 ```
-conda deactivate
+hostile index fetch -n <index_name>
 ```
 
 ### Performing Dehosting
@@ -142,6 +122,24 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
 
 ## Output
 
+The basic output directory structure is:
+
+```
+outdir
+├── basic_qc_stats.csv
+├── sample-01
+│   ├── sample-01_fastp.csv
+│   ├── sample-01_fastp.json
+│   └── sample-01_fastp.html
+├── sample-02
+│   ├── sample-02_fastp.csv
+│   ├── sample-02_fastp.json
+│   └── sample-02_fastp.html
+├── sample-03
+│   ├── ...
+...
+```
+
 A single output file in .csv format will be created in the directory specified by `--outdir`. The filename will be `basic_qc_stats.csv`.
 If a prefix is provided using the `--prefix` flag, it will be prepended to the output filename, for example: `prefix_basic_qc_stats.csv`.
 
@@ -169,26 +167,61 @@ gc_content_before_filtering
 gc_content_after_filtering
 adapter_trimmed_reads
 adapter_trimmed_bases
+read1_num_poly_g_before_filtering
+read1_num_poly_g_after_filtering
+read2_num_poly_g_before_filtering
+read2_num_poly_g_after_filtering
+duplication_rate
 ```
+
+For each sample, a separate output dir will be created below the `--outdir`, named using the sample ID and containing csv, json and html-formatted fastp reports for that sample.
+
+### Trimmed Reads
+
+If the `--publish_trimmed_reads` flag is included, the trimmed reads will be included in the output. If no dehosting is performed, these files will be named:
+
+```
+<SAMPLE_ID>/<SAMPLE_ID>_trimmed_R1.fastq.gz
+<SAMPLE_ID>/<SAMPLE_ID>_trimmed_R2.fastq.gz
+```
+
+If dehosting is performed, the trimmed reads will be named:
+
+```
+<SAMPLE_ID>/<SAMPLE_ID>_pre-dehosting_trimmed_R1.fastq.gz
+<SAMPLE_ID>/<SAMPLE_ID>_pre-dehosting_trimmed_R2.fastq.gz
+```
+
+...to make clear that those reads have been trimmed, but not dehosted.
 
 ### Dehosted Reads
 
-If dehosting is performed, dehosted reads will be deposited under the directory supplied for the `--outdir` param, in a sub-directory
-for each sample, named using the sample ID. For example:
+If dehosting is performed, dehosted reads will be published under the directory supplied for the `--outdir` param, in a sub-directory
+for each sample, named using the sample ID. In addition, separate fastp reports will be generated before and after dehosting.
+
+For example:
 
 ```
 outdir
 ├── sample-01
 │   ├── sample-01_dehosted_R1.fastq.gz
 │   ├── sample-01_dehosted_R2.fastq.gz
-│   ├── sample-01_dehosted_fastp.csv
-│   ├── sample-01_fastp.csv
+│   ├── sample-01_post-dehosting_fastp.csv
+│   ├── sample-01_post-dehosting_fastp.json
+│   ├── sample-01_post-dehosting_fastp.html
+│   ├── sample-01_pre-dehosting_fastp.csv
+│   ├── sample-01_pre-dehosting_fastp.json
+│   ├── sample-01_pre-dehosting_fastp.html
 │   └── sample-01_hostile.log.json
 ├── sample-02
 │   ├── sample-02_dehosted_R1.fastq.gz
 │   ├── sample-02_dehosted_R2.fastq.gz
-│   ├── sample-02_dehosted_fastp.csv
-│   ├── sample-02_fastp.csv
+│   ├── sample-02_post-dehosting_fastp.csv
+│   ├── sample-02_post-dehosting_fastp.json
+│   ├── sample-02_post-dehosting_fastp.html
+│   ├── sample-02_pre-dehosting_fastp.csv
+│   ├── sample-02_pre-dehosting_fastp.json
+│   ├── sample-02_pre-dehosting_fastp.html
 │   └── sample-02_hostile.log.json
 ├── sample-03
 │   ├── ...
