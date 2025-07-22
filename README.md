@@ -61,57 +61,25 @@ nextflow run BCCDC-PHL/basic-sequence-qc \
 This pipeline supports an optional dehosting step that can be used to remove human-derived sequence reads.
 Removal of host reads from other organisms is not currently supported.
 
-### Setup
-
-Before using this pipeline to perform dehosting, the human reference genome(s) should be downloaded.
-Dehosting is performed by attempting to align reads against the human genome and removing reads
-that align with sufficient quality and specificity.
-
-1. Activate the conda environment that is used by this pipeline for dehosting.
-
-```
-conda activate basic-sequence-qc-dehosting-eeb6f6f753e1d37317d1d06b4e3141d5
-```
-
-2. Download (fetch) the default reference genome (`human-t2t-hla`)
-
-```
-hostile fetch
-```
-
-The reference will be downloaded to:
-
-```
-~/.local/share/hostile
-```
-
-If alternative versions of the reference genome are needed, download them 
-
-```
-hostile fetch --name <REF_NAME>
-```
 
 Details on available references can be found on [the bede/hostile README](https://github.com/bede/hostile?tab=readme-ov-file#indexes).
 The list of available reference names can be found by running:
 
 ```
-hostile fetch --list
+hostile index list
 ```
 
 ...which should return a list like this:
 
 ```
-human-t2t-hla
-human-t2t-hla-argos985
-human-t2t-hla-argos985-mycob140
-human-t2t-hla.rs-viral-202401_ml-phage-202401
-human-t2t-hla.argos-bacteria-985_rs-viral-202401_ml-phage-202401
-```
-
-3. Deactivate the conda env.
-
-```
-conda deactivate
+Remote  human-t2t-hla
+Remote  human-t2t-hla-argos985
+Remote  human-t2t-hla-argos985-mycob140
+Remote  human-t2t-hla.rs-viral-202401_ml-phage-202401
+Remote  human-t2t-hla.argos-bacteria-985_rs-viral-202401_ml-phage-202401
+Remote  mouse-mm39
+Local   human-t2t-hla (Bowtie2)
+Local   human-t2t-hla-argos985-mycob140 (Minimap2, Bowtie2)
 ```
 
 ### Performing Dehosting
