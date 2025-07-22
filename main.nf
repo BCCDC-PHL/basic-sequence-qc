@@ -18,7 +18,6 @@ workflow {
 
   main:
 
-
     if (!params.dehost) {
         fastp(ch_fastq_input)
     }

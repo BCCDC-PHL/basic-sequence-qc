@@ -156,7 +156,7 @@ def main(args):
         output_fields = ['sample_id'] + output_fields
         output_data['sample_id'] = args.sample_id
 
-    writer = csv.DictWriter(sys.stdout, fieldnames=output_fields, quoting=csv.QUOTE_MINIMAL, extrasaction='ignore')
+    writer = csv.DictWriter(sys.stdout, fieldnames=output_fields, dialect='unix', quoting=csv.QUOTE_MINIMAL, extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
     writer.writerow(output_data)
 
