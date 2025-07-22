@@ -38,6 +38,7 @@ def parse_fastp_csv(fastp_csv_path: Path):
         'q30_rate_after_filtering',
         'gc_content_before_filtering',
         'gc_content_after_filtering',
+        'duplication_rate',
     ]
     with open(fastp_csv_path, 'r') as f:
         reader = csv.DictReader(f)
@@ -116,9 +117,10 @@ def main(args):
         'read1_num_poly_g_after_filtering',
         'read2_num_poly_g_before_filtering',
         'read2_num_poly_g_after_filtering',
+        'duplication_rate',
 
     ]
-    writer = csv.DictWriter(sys.stdout, fieldnames=output_fieldnames, dialect='unix', quoting=csv.QUOTE_MINIMAL, extrasaction='ignore')
+    writer = csv.DictWriter(sys.stdout, fieldnames=output_fieldnames, dialect='unix', quoting=csv.QUOTE_MINIMAL, extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
     writer.writerow(combined_report)
 

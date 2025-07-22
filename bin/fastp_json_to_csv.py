@@ -93,6 +93,8 @@ def main(args):
     adapter_trimmed_reads = fastp_report['adapter_cutting']['adapter_trimmed_reads']
     adapter_trimmed_bases = fastp_report['adapter_cutting']['adapter_trimmed_bases']
 
+    duplication_rate = fastp_report['duplication']['rate']
+    
     poly_g_counts = count_poly_g(fastp_report)
 
     output_fields = [
@@ -104,10 +106,6 @@ def main(args):
         'read1_mean_length_after_filtering',
         'read2_mean_length_before_filtering',
         'read2_mean_length_after_filtering',
-        'read1_num_poly_g_before_filtering',
-        'read1_num_poly_g_after_filtering',
-        'read2_num_poly_g_before_filtering',
-        'read2_num_poly_g_after_filtering',
         'q20_bases_before_filtering',
         'q20_bases_after_filtering',
         'q20_rate_before_filtering',
@@ -124,6 +122,7 @@ def main(args):
         'read1_num_poly_g_after_filtering',
         'read2_num_poly_g_before_filtering',
         'read2_num_poly_g_after_filtering',
+        'duplication_rate',
     ]
 
     output_data = {
@@ -147,6 +146,7 @@ def main(args):
         'gc_content_after_filtering': gc_content_after_filtering,
         'adapter_trimmed_reads': adapter_trimmed_reads,
         'adapter_trimmed_bases': adapter_trimmed_bases,
+        'duplication_rate': duplication_rate,
     }
 
     for k, v in poly_g_counts.items():
