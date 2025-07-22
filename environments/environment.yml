@@ -5,3 +5,4 @@ channels:
 dependencies:
   - python=3
   - fastp=1.0.1
+  - hostile=2.0.1
