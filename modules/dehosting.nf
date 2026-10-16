@@ -11,9 +11,20 @@ process dehost {
     output:
     tuple val(sample_id), path("${sample_id}_hostile.log.json"), emit: hostile_log
     tuple val(sample_id), path("${sample_id}_dehosted*.fastq.gz"), emit: dehosted_reads
+    tuple val(sample_id), path("${sample_id}_dehost_provenance.yml"), emit: provenance
 
     script:
     """
+    printf -- "- process_name: dehost\\n"                                            >> ${sample_id}_dehost_provenance.yml
+    printf -- "  tools:\\n"                                                          >> ${sample_id}_dehost_provenance.yml
+    printf -- "    - tool_name: hostile\\n"                                          >> ${sample_id}_dehost_provenance.yml
+    printf -- "      tool_version: \$(hostile --version 2>&1 | tail -n 1)\\n"         >> ${sample_id}_dehost_provenance.yml
+    printf -- "      parameters:\\n"                                                 >> ${sample_id}_dehost_provenance.yml
+    printf -- "        - parameter: --index\\n"                                      >> ${sample_id}_dehost_provenance.yml
+    printf -- "          value: ${params.dehosting_index}\\n"                        >> ${sample_id}_dehost_provenance.yml
+    printf -- "        - parameter: --threads\\n"                                    >> ${sample_id}_dehost_provenance.yml
+    printf -- "          value: ${task.cpus}\\n"                                     >> ${sample_id}_dehost_provenance.yml
+
     export HOSTILE_CACHE_DIR=${hostile_cache_dir}
 
     hostile clean \

@@ -227,3 +227,47 @@ outdir
 │   ├── ...
 ...
 ```
+
+## Provenance
+
+Each sample's output directory also holds a timestamped provenance file,
+`<sample_id>_<timestamp>_provenance.yml`, recording the pipeline version, the sha256
+of every input and output fastq, and the tool version and parameters of each process
+that ran:
+
+```yml
+- pipeline_name: BCCDC-PHL/basic-sequence-qc
+  pipeline_version: 0.4.0
+  nextflow_session_id: ceb7cc4c-644b-47bd-9469-5f3a7658119f
+  nextflow_run_name: voluminous_jennings
+  timestamp_analysis_start: 2024-03-19T15:23:43.570174-07:00
+- input_filename: sample-01_R1.fastq.gz
+  input_path: /path/to/sample-01_R1.fastq.gz
+  sha256: 78066ef7f601ff10149d5c44a5f8ccd06f7c7a292f3bb2c05eee109e1138e5fd
+- input_filename: sample-01_R2.fastq.gz
+  input_path: /path/to/sample-01_R2.fastq.gz
+  sha256: 43f610cb4199ab4e00e07ba0cf8b37fefdd2ec0b2bc26abe6b57af6f0f0a091c
+- process_name: fastp
+  tools:
+    - tool_name: fastp
+      tool_version: 1.0.1
+      parameters:
+        - parameter: --cut_tail
+          value: null
+        - parameter: --trim_poly_g
+          value: null
+        - parameter: --overrepresentation_analysis
+          value: null
+        - parameter: --detect_adapter_for_pe
+          value: null
+- input_filename: sample-01_trimmed_R1.fastq.gz
+  input_path: /path/to/work/sample-01_trimmed_R1.fastq.gz
+  sha256: 58f01734c76c70f06eb7cc8a890ffac217f08e316bd3fd83ff41389b7775b8ef
+```
+
+Under `--dehost` the single `fastp` block is replaced by three: `fastp_pre_dehosting`,
+`dehost` (recording the hostile version and `--index`), and `fastp_post_dehosting`. The
+output hashes are then of the dehosted reads.
+
+The reads are hashed whether or not `--publish_trimmed_reads` is set, so the provenance
+describes what the pipeline computed rather than what it copied out.
